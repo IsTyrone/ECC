@@ -34,11 +34,12 @@
  * @packageDocumentation
  */
 
-// Export the main plugin
-export { ECCHooksPlugin, default } from "./plugins/index.js"
+// Export the main v2 plugin (OpenCode v2: default-exported definition).
+export { default } from "./plugins/index.js"
 
-// Export individual components for selective use
-export * from "./plugins/index.js"
+// Export the tool runners for selective use
+export * from "./tools/changed-files.js"
+export * from "./tools/dependency-analyzer.js"
 
 // Version export
 export const VERSION = "1.6.0"
@@ -55,17 +56,15 @@ export const metadata = {
     skills: 37,
     configAssets: true,
     hookEvents: [
-      "file.edited",
       "tool.execute.before",
       "tool.execute.after",
       "session.created",
       "session.idle",
       "session.deleted",
-      "file.watcher.updated",
-      "permission.ask",
-      "todo.updated",
-      "shell.env",
-      "experimental.session.compacting",
+      "filesystem.changed",
+      "permission.evaluate",
+      "shell.create.before",
+      "compaction",
     ],
     customTools: [
       "run-tests",

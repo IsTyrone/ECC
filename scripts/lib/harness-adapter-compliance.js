@@ -118,7 +118,7 @@ const ADAPTER_RECORDS = Object.freeze([
     owner: 'ECC maintainers',
     source_docs: [
       '.opencode/package.json',
-      '.opencode/plugins/ecc-hooks.ts',
+      '.opencode/plugins/index.ts',
       'scripts/build-opencode.js',
     ],
   },

@@ -51,10 +51,35 @@ else failed++;
 
 if (
   test('plugin paths do not duplicate the .opencode directory', () => {
-    const plugins = config.plugin || [];
+    assert.ok(!Object.hasOwn(config, 'plugin'), 'Legacy v1 "plugin" key must be renamed to "plugins" for OpenCode v2');
+    const plugins = config.plugins || [];
+    assert.ok(plugins.length > 0, 'Expected opencode.json to declare at least one v2 plugin path');
     for (const pluginPath of plugins) {
       assert.ok(!pluginPath.includes('.opencode/'), `Plugin path should be config-relative, got: ${pluginPath}`);
       assert.ok(fs.existsSync(path.resolve(opencodeDir, pluginPath)), `Plugin path should resolve from .opencode/: ${pluginPath}`);
+    }
+  })
+)
+  passed++;
+else failed++;
+
+if (
+  test('instruction entries resolve to shipped files', () => {
+    const instructions = config.instructions || [];
+    assert.ok(instructions.length > 0, 'Expected opencode.json to declare at least one instruction file');
+    for (const entry of instructions) {
+      // Mirror the installer contract: `.opencode/*` ships to the config
+      // root as-is, while repo-root `skills/*` ships to `<config>/skills/*`.
+      // Anything else (e.g. repo-root docs) never reaches the installed
+      // config, so such entries are dead references.
+      const candidates = [path.resolve(opencodeDir, entry)];
+      if (entry.startsWith('skills/')) {
+        candidates.push(path.resolve(repoRoot, entry));
+      }
+      assert.ok(
+        candidates.some((candidate) => fs.existsSync(candidate)),
+        `Instruction entry should resolve to a shipped file: ${entry}`
+      );
     }
   })
 )
